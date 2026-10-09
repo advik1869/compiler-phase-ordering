@@ -1,0 +1,205 @@
+{
+  "schema_version": 1,
+  "benchmarks": [
+    {
+      "id": "B01",
+      "file": "01_constant_chain.tac",
+      "category": "straight_line",
+      "description": "Propagates one constant through a chain of assignments and arithmetic.",
+      "optimization_opportunities": ["constant_propagation", "constant_folding"],
+      "control_flow": "straight_line",
+      "ordering_sensitivity": "moderate",
+      "expected_interactions": ["CP->CF"]
+    },
+    {
+      "id": "B02",
+      "file": "02_constant_arithmetic.tac",
+      "category": "straight_line",
+      "description": "Combines two literal inputs through several arithmetic expressions.",
+      "optimization_opportunities": ["constant_propagation", "constant_folding"],
+      "control_flow": "straight_line",
+      "ordering_sensitivity": "moderate",
+      "expected_interactions": ["CP->CF"]
+    },
+    {
+      "id": "B03",
+      "file": "03_dead_temporary_chain.tac",
+      "category": "straight_line",
+      "description": "Builds a dead computation chain before a constant return.",
+      "optimization_opportunities": ["dead_code_elimination", "constant_propagation", "constant_folding"],
+      "control_flow": "straight_line",
+      "ordering_sensitivity": "low",
+      "expected_interactions": ["CF->DCE"]
+    },
+    {
+      "id": "B04",
+      "file": "04_repeated_expression.tac",
+      "category": "straight_line",
+      "description": "Uses repeated additions and combines their results.",
+      "optimization_opportunities": ["common_subexpression_elimination", "constant_propagation", "constant_folding"],
+      "control_flow": "straight_line",
+      "ordering_sensitivity": "moderate",
+      "expected_interactions": ["CP->CF", "CF->CSE"]
+    },
+    {
+      "id": "B05",
+      "file": "05_mixed_straight_line.tac",
+      "category": "straight_line",
+      "description": "Combines constants, a dead value, repeated multiplication, and live arithmetic.",
+      "optimization_opportunities": ["constant_propagation", "constant_folding", "dead_code_elimination", "common_subexpression_elimination"],
+      "control_flow": "straight_line",
+      "ordering_sensitivity": "likely",
+      "expected_interactions": ["CP->CF", "CF->DCE", "DCE->CSE"]
+    },
+    {
+      "id": "B06",
+      "file": "06_constant_branch.tac",
+      "category": "branch",
+      "description": "Uses a condition that becomes constant while retaining explicit branch structure.",
+      "optimization_opportunities": ["constant_propagation", "constant_folding"],
+      "control_flow": "conditional_branch",
+      "ordering_sensitivity": "low",
+      "expected_interactions": ["CP->CF"]
+    },
+    {
+      "id": "B07",
+      "file": "07_branch_dead_code.tac",
+      "category": "branch",
+      "description": "Places unused computations in both sides of a control-flow join.",
+      "optimization_opportunities": ["dead_code_elimination", "constant_propagation"],
+      "control_flow": "conditional_branch_and_join",
+      "ordering_sensitivity": "moderate",
+      "expected_interactions": ["CP->DCE"]
+    },
+    {
+      "id": "B08",
+      "file": "08_branch_repeated_expression.tac",
+      "category": "branch",
+      "description": "Computes the same expression on both paths before a join.",
+      "optimization_opportunities": ["common_subexpression_elimination", "constant_propagation"],
+      "control_flow": "conditional_branch_and_join",
+      "ordering_sensitivity": "moderate",
+      "expected_interactions": ["CP->CSE"]
+    },
+    {
+      "id": "B09",
+      "file": "09_mixed_branch.tac",
+      "category": "branch",
+      "description": "Combines branch-local dead values with useful arithmetic on both paths.",
+      "optimization_opportunities": ["constant_propagation", "constant_folding", "dead_code_elimination"],
+      "control_flow": "conditional_branch_and_join",
+      "ordering_sensitivity": "likely",
+      "expected_interactions": ["CP->CF", "CF->DCE"]
+    },
+    {
+      "id": "B10",
+      "file": "10_loop_constant.tac",
+      "category": "loop",
+      "description": "Runs a bounded accumulator loop with a constant expression outside the loop body.",
+      "optimization_opportunities": ["constant_propagation", "constant_folding"],
+      "control_flow": "counted_loop",
+      "ordering_sensitivity": "moderate",
+      "expected_interactions": ["CP->CF"]
+    },
+    {
+      "id": "B11",
+      "file": "11_loop_dead_code.tac",
+      "category": "loop",
+      "description": "Computes an unused temporary on every iteration of a terminating loop.",
+      "optimization_opportunities": ["dead_code_elimination", "constant_propagation"],
+      "control_flow": "counted_loop",
+      "ordering_sensitivity": "low",
+      "expected_interactions": ["CP->DCE"]
+    },
+    {
+      "id": "B12",
+      "file": "12_loop_repeated_expression.tac",
+      "category": "loop",
+      "description": "Repeats an expression inside a bounded loop to exercise cyclic analysis.",
+      "optimization_opportunities": ["common_subexpression_elimination", "constant_propagation"],
+      "control_flow": "counted_loop",
+      "ordering_sensitivity": "moderate",
+      "expected_interactions": ["CP->CSE"]
+    },
+    {
+      "id": "B13",
+      "file": "13_cse_simple.tac",
+      "category": "cse",
+      "description": "Presents two adjacent identical expressions with stable operands.",
+      "optimization_opportunities": ["common_subexpression_elimination"],
+      "control_flow": "straight_line",
+      "ordering_sensitivity": "low",
+      "expected_interactions": ["CSE"]
+    },
+    {
+      "id": "B14",
+      "file": "14_cse_separated.tac",
+      "category": "cse",
+      "description": "Separates two identical expressions with unrelated assignments.",
+      "optimization_opportunities": ["common_subexpression_elimination"],
+      "control_flow": "straight_line",
+      "ordering_sensitivity": "moderate",
+      "expected_interactions": ["CSE"]
+    },
+    {
+      "id": "B15",
+      "file": "15_cse_redefinition.tac",
+      "category": "cse",
+      "description": "Redefines an expression operand between two similar expressions.",
+      "optimization_opportunities": ["common_subexpression_elimination"],
+      "control_flow": "straight_line",
+      "ordering_sensitivity": "low",
+      "expected_interactions": ["CSE operand invalidation"]
+    },
+    {
+      "id": "B16",
+      "file": "16_cp_cf_interaction.tac",
+      "category": "multi_pass_interaction",
+      "description": "Requires propagation through a copy before arithmetic can be folded.",
+      "optimization_opportunities": ["constant_propagation", "constant_folding"],
+      "control_flow": "straight_line",
+      "ordering_sensitivity": "strong",
+      "expected_interactions": ["CP->CF"]
+    },
+    {
+      "id": "B17",
+      "file": "17_cf_dce_interaction.tac",
+      "category": "multi_pass_interaction",
+      "description": "Places a foldable dead chain beside a live result.",
+      "optimization_opportunities": ["constant_folding", "dead_code_elimination"],
+      "control_flow": "straight_line",
+      "ordering_sensitivity": "moderate",
+      "expected_interactions": ["CF->DCE"]
+    },
+    {
+      "id": "B18",
+      "file": "18_dce_cse_interaction.tac",
+      "category": "multi_pass_interaction",
+      "description": "Combines a dead duplicate with live repeated expressions.",
+      "optimization_opportunities": ["dead_code_elimination", "common_subexpression_elimination"],
+      "control_flow": "straight_line",
+      "ordering_sensitivity": "moderate",
+      "expected_interactions": ["DCE->CSE"]
+    },
+    {
+      "id": "B19",
+      "file": "19_multi_pass_chain.tac",
+      "category": "multi_pass_interaction",
+      "description": "Chains propagation, folding, dead-code removal, and live arithmetic.",
+      "optimization_opportunities": ["constant_propagation", "constant_folding", "dead_code_elimination"],
+      "control_flow": "straight_line",
+      "ordering_sensitivity": "strong",
+      "expected_interactions": ["CP->CF", "CF->DCE"]
+    },
+    {
+      "id": "B20",
+      "file": "20_full_interaction.tac",
+      "category": "multi_pass_interaction",
+      "description": "Combines constants, repeated expressions, dead code, and a branch.",
+      "optimization_opportunities": ["constant_propagation", "constant_folding", "dead_code_elimination", "common_subexpression_elimination"],
+      "control_flow": "conditional_branch_and_join",
+      "ordering_sensitivity": "strong",
+      "expected_interactions": ["CP->CF", "CF->DCE", "DCE->CSE"]
+    }
+  ]
+}
